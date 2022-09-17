@@ -23,7 +23,7 @@ const App = () => {
     alert('Please contact admin.')
   };
   return (
-    <div>
+    <div className="logindiv">
       <form className="form" onSubmit={handleSubmit}>
           <div className="input-group">
             <label htmlFor="email">Email ID</label>

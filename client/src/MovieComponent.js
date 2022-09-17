@@ -12,7 +12,7 @@ const MovieComponent = (props) => {
     return (
         <div onClick={() => handleSeats(props.movie.Title)} className='image-container d-flex justify-content-start m-3'>
             <img src={props.movie.Poster} alt='movie' className="movieimage"></img>
-            <p>{props.movie.Title}</p>
+            <b><p> {props.movie.Title.toUpperCase()}</p></b>
             <p>{props.movie.Year}</p>
 		</div>
       );

@@ -19,22 +19,22 @@ const Dashboard = () => {
         setMovies(data)
       });
   }, []);
-  const handleSubmit = (e) => {
-    //navigate("/seats");
-  };
+  
   if (!authenticated) {
   } else {
     return (
+      <>
       <div>
-        <p>Welcome to your Dashboard</p>
+        <b><p className="welcomemsg">Welcome to the Movie Dashboard</p></b>
+        <p className="selectmsg">Select a Movie to Book Seats</p>
+        </div>
+      <div className="moviesdiv">
         {movies.map((movie, index) => (
 				<MovieComponent movie={movie}/>
-		))}
+		    ))}
 	    
-        <form onSubmit={handleSubmit}>
-	      <input type="submit" value="Submit" />
-	  </form>
       </div>
+      </>
     )
   }
 };

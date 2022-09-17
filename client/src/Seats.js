@@ -2,78 +2,55 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./App.css";
 
-
 const Seats = (props) => {
-  const [seats, setSeats] = useState({
-    "starwars": [{
-      "id": 1,
-      "status": "occupied"
-    }, {
-      "id": 2,
-      "status": "selected"
-    }, {
-      "id": 3,
-      "status": "selected"
-    }, {
-      "id": 4,
-      "status": "occupied"
-    }, {
-      "id": 5,
-      "status": "occupied"
-    }],
-    "empirestrikes": [{
-      "id": 1,
-      "status": "occupied"
-    }, {
-      "id": 2,
-      "status": "selected"
-    }, {
-      "id": 3,
-      "status": "occupied"
-    }, {
-      "id": 4,
-      "status": "occupied"
-    }, {
-      "id": 5,
-      "status": "occupied"
-    }]
-  });
+  const [seats, setSeats] = useState([]);
   useEffect(() => {
-    
-    fetch('http://localhost:3001/getAllSeatDetails')
-      .then(results => results.json())
-      .then(data => {
-        console.log(data)
-        setSeats(data)
-      });
+    const fetchKeywords = async () => {
+      await fetch('http://localhost:3001/getAllSeatDetails')
+        .then(results => results.json())
+        .then(data => {
+          console.log(data)
+          setSeats(data)
+        });
+    }
+    fetchKeywords();
   }, []);
 
-  const handleReserveSeat = (e) =>{
+  const handleReserveSeat = (e) => {
+    if (document.getElementById(e).classList.contains('occupied')) {
+      alert('Seat is Occupied')
+    }
+    else {
+      document.getElementById(e).classList.remove("vacant")
+      document.getElementById(e).classList.add("selected")
+      console.log(e);
+      fetch('http://localhost:3001/reserveSeat?seatreservedId='+e+'&title='+moviename, {
+        method: 'post'
+      }).then(res => res.json())
+        .then((result) => {setSeats(result)})
+    }
 
-    document.getElementById(e).classList.add("selected")
-    document.getElementById(e).classList.remove("occupied")
-    console.log(e);
-    fetch('http://localhost:3001/reserveSeat', {
-      method: 'post',
-      body: JSON.stringify({seatreservedId: e})
-     }).then(res => res)
-      .then(
-      (result) => {
-        
-
-      })
-    
   }
   var moviename = decodeURIComponent(window.location.search.substring(11));
-    return (
-        <div className="df">
-         <div className="row">
-          {seats[moviename].map((seat, index) => (
-            <div id={seat.id} onClick={() => handleReserveSeat(seat.id)} className = {`seat ${seat.status}`}></div>
+  return (
+    <div className="df flexcolumn">
+      <b><p className="selectmsg">Select seats from Below :</p></b>
+      <div><br />
+        <div className="row df flexcolumn aligncenter">
+          {seats[moviename]?.map((seat, index) => (
+            <div id={seat.id} onClick={() => handleReserveSeat(seat.id)} className={`seat ${seat.status}`}></div>
           ))}
-         </div>
-         
         </div>
-      );
+
+
+        <p className="selectmsg">Number of Seats Confirmed : {seats[moviename]?.filter(t => t.status == "selected").length}</p>
+        <div className="df legenddiv">
+          <div className="seat occupied"></div><span className="legend">Occupied</span>
+          <div className="seat selected"></div><span className="legend">Selected</span>
+          <div className="seat"></div><span className="legend">Vacant</span>
+        </div>
+      </div>
+    </div>
+  );
 };
 export default Seats;
